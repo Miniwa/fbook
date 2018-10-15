@@ -1,0 +1,16 @@
+{
+    "extends": "google",
+    "env": {
+        "node": true
+    },
+    "parserOptions": {
+        "ecmaVersion": 6
+    },
+    "rules": {
+        "require-jsdoc": "off",
+        "indent": ["error", 4],
+        "quotes": ["error", "double"],
+        "linebreak-style": "off",
+        "prefer-const": "off"
+    }
+}
