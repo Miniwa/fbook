@@ -11,6 +11,8 @@
         "indent": ["error", 4],
         "quotes": ["error", "double"],
         "linebreak-style": "off",
-        "prefer-const": "off"
+        "prefer-const": "off",
+        "new-cap": "off",
+        "keyword-spacing": "off"
     }
 }

@@ -1,6 +1,7 @@
 const express = require("express");
 
 let app = express();
-app.use(express.static("static"));
+let routes = require("../routes");
 
+app.use(routes);
 module.exports = app;
