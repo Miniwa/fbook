@@ -8,36 +8,32 @@
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
     <script src="js/core/api.js"></script>
     <script src="js/core/dom.js"></script>
-    <script defer src="js/page_index.js"></script>
+    <script defer src="js/page_search.js"></script>
     <title>Fbook</title>
  </head>
  <body>
 <div class="fbook-nav">
     <a class="active" href="#home">Profil</a>
-    <a href="/search.html">Sök</a>
+    <a href="#search">Sök</a>
     <a href="/logout">Logga ut</a>
 </div>
-    <div class="fbook-main container">
-        <div class="row">
-            <div class="fbook-message-container offset-2 col-4">
-                <h3>Inlägg</h3>
-                <div class="fbook-messages">
-
-                </div>
+<div class="fbook-main container">
+    <div class="row">
+        <div class="offset-4 col-4">
+            <div class="form-group">
+                <label for="query">Namn</label>
+                <input class="form-control" type="text" id="query" name="query" />
             </div>
-                <h3>Vänner</h3>
-                <div class="fbook-friends col-4">
-            </div>
-        </div>
-        <div class="row">
-            <div class="offset-4 col-4">
-                <div class="form-group">
-                    <label for="comment">Kommentar</label>
-                    <input id="comment" name="comment" class="form-control" type="text" />
-                </div>
-                <button class="fbook-post-comment btn btn-primary">Publicera</button>
+            <div class="form-group">
+                <button class="fbook-search btn btn-primary">Sök</button>
             </div>
         </div>
     </div>
+    <div class="row">
+        <div class="fbook-search-result offset-4 col-4">
+            <h4>Resultat</h4>
+        </div>
+    </div>
+</div>
 </body>
 </html>

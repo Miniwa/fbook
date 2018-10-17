@@ -2,20 +2,28 @@
     "name": "fbook",
     "version": "0.0.1",
     "description": "",
-    "main": "src/main.js",
+    "main": "main.js",
     "directories": {
         "test": "test"
     },
     "scripts": {
-        "start": "node src/main.js",
+        "start": "node main.js",
         "watch": "npm-watch start",
         "test": "nyc mocha --allow-uncaught -t 5000 --exit"
     },
     "watch": {
-        "start": "src/*.js"
+        "start": [
+            "main.js",
+            "app.js",
+            "routes.js",
+            "src/*.js"
+        ]
     },
     "dependencies": {
+        "body-parser": "^1.18.3",
+        "cookie-parser": "^1.4.3",
         "express": "^4.0.0",
+        "express-session": "^1.15.6",
         "mongodb": "^3.1.6",
         "mongoose": "^5.3.4",
         "passport": "^0.4.0",

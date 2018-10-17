@@ -1,20 +1,59 @@
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
 let userSchema = new mongoose.Schema({
-    userName: String,
-    name: {
-        first: String,
-        last: String,
+    username: {
+        type: String,
+        required: true,
     },
-    password: String,
+    name: {
+        type: {
+            first: {
+                type: String,
+                required: true,
+            },
+            last: {
+                type: String,
+                required: true,
+            },
+        },
+        required: true,
+    },
+    password: {
+        type: String,
+        required: true,
+    },
+    friends: [{type: Schema.Types.ObjectId, ref: "User"}],
 });
 
-userSchema.query.byUserName = function(userName) {
+userSchema.query.byNameQuery = function(query) {
+    let firstNameQuery = {
+        "name.first": new RegExp(query, "i"),
+    };
+    let lastNameQuery = {
+        "name.last": new RegExp(query, "i"),
+    };
+    return this.or([firstNameQuery, lastNameQuery]);
+};
+
+userSchema.query.byUserName = function(username) {
     return this.where({
-        userName: userName,
+        username: username,
     });
 };
 
-const User = mongoose.Model("User", userSchema);
+userSchema.query.withFriends = function() {
+    return this.populate("friends");
+};
+
+userSchema.statics.byNameQuery = function(query) {
+    return this.find().byNameQuery(query).exec();
+};
+
+userSchema.statics.byUserName = function(username) {
+    return this.findOne().byUserName(username).exec();
+};
+
+const User = mongoose.model("User", userSchema);
 
 module.exports = User;
