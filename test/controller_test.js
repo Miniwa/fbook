@@ -10,7 +10,8 @@ let USER2_ID;
 
 chai.use(chaiHttp);
 
-function login(agent) {
+function login() {
+    let agent = chai.request.agent(app);
     return agent.post("/auth")
         .type("form")
         .send({
@@ -18,7 +19,7 @@ function login(agent) {
             password: "test",
         }).then((res) => {
             res.should.have.status(200);
-            //res.should.redirectTo("/");
+            return agent;
         });
 }
 
@@ -41,7 +42,7 @@ describe("Backend", () => {
                 last: "Byrde",
             },
         });
-        USER1_ID = user1._id;
+        USER1_ID = user1._id.toString();
 
         let user2 = new User({
             username: "test1",
@@ -51,7 +52,7 @@ describe("Backend", () => {
                 last: "Testar",
             },
         });
-        USER2_ID = user2._id;
+        USER2_ID = user2._id.toString();
 
         Promise.all([Post.remove({}), User.remove({})]).then(() => {
             Promise.all([user1.save(), user2.save()]).then(() => {
@@ -205,8 +206,7 @@ describe("Backend", () => {
 
     describe("GET /user/search", () => {
         it("should return all users if no query", (done) => {
-            let agent = chai.request.agent(app);
-            login(agent).then(() => {
+            login().then((agent) => {
                 agent.get("/user/search").end((err, res) => {
                     res.should.have.status(200);
                     res.body.length.should.eq(2);
@@ -216,8 +216,7 @@ describe("Backend", () => {
         });
 
         it("should filter by query if query included", (done) => {
-            let agent = chai.request.agent(app);
-            login(agent).then(() => {
+            login().then((agent) => {
                 agent.get("/user/search")
                     .query({
                         q: "test",
@@ -233,12 +232,11 @@ describe("Backend", () => {
 
     describe("POST /addFriend", () => {
         it("should add user to friendlist", (done) => {
-            let agent = chai.request.agent(app);
-            login(agent).then(() => {
+            login().then((agent) => {
                 agent.post("/addFriend")
                     .type("form")
                     .send({
-                        userId: USER2_ID,
+                        friendId: USER2_ID,
                     })
                     .end((err, res) => {
                         res.should.have.status(200);
@@ -247,6 +245,106 @@ describe("Backend", () => {
                                 user.friends.length.should.eq(1);
                                 done();
                             });
+                    });
+            });
+        });
+
+        it("should return 400 if missing parameter", (done) => {
+            login().then((agent) => {
+                agent.post("/addFriend")
+                    .type("form")
+                    .end((err, res) => {
+                        res.should.have.status(400);
+                        done();
+                    });
+            });
+        });
+
+        it("should return 400 if attempting to add self", (done) => {
+            login().then((agent) => {
+                agent.post("/addFriend")
+                    .type("form")
+                    .send({
+                        friendId: USER1_ID,
+                    })
+                    .end((err, res) => {
+                        res.should.have.status(400);
+                        done();
+                    });
+            });
+        });
+    });
+
+    describe("/GET getFriends", () => {
+        it("should return friends for a user", (done) => {
+            User.findById(USER1_ID).then((user) => {
+                user.friends.push(USER2_ID);
+                user.save().then(() => {
+                    login().then((agent) => {
+                        agent.get("/getFriends")
+                            .query({
+                                "userId": USER1_ID,
+                            })
+                            .end((err, res) => {
+                                res.should.have.status(200);
+                                res.body.length.should.eq(1);
+                                done();
+                            });
+                    });
+                }).catch((err) => {
+                    console.error(err);
+                });
+            });
+        });
+
+        it("should return 400 on missing parameters", (done) => {
+            login().then((agent) => {
+                agent.get("/getFriends")
+                    .end((err, res) => {
+                        res.should.have.status(400);
+                        done();
+                    });
+            });
+        });
+    });
+
+    describe("/GET getOwnFriends", () => {
+        it("should return friends for logged in user", (done) => {
+            User.findById(USER1_ID).then((user) => {
+                user.friends.push(USER2_ID);
+                user.save().then(() => {
+                    login().then((agent) => {
+                        agent.get("/getOwnFriends")
+                            .end((err, res) => {
+                                res.should.have.status(200);
+                                res.body.length.should.eq(1);
+                                done();
+                            });
+                    });
+                }).catch((err) => {
+                    console.error(err);
+                });
+            });
+        });
+    });
+
+    describe("/POST createPost", () => {
+        it("should create a new post", (done) => {
+            login().then((agent) => {
+                agent.post("/createPost")
+                    .type("form")
+                    .send({
+                        userId: USER2_ID,
+                        comment: "comment",
+                    })
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        Post.find().receivedBy(USER2_ID).exec().then((posts) => {
+                            posts.length.should.eq(1);
+                            posts[0].receiver.toString().should.eq(USER2_ID);
+                            posts[0].author.toString().should.eq(USER1_ID);
+                            done();
+                        });
                     });
             });
         });

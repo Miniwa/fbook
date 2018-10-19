@@ -43,12 +43,12 @@ function getUsersByNameQuery(req, res) {
 
 function addFriend(req, res) {
     let friendId = req.body.friendId;
-    if(friendId === req.user._id) {
-        res.status(400).send("Can't add yourself as friend").end();
+    if(friendId === undefined) {
+        res.status(400).end();
         return;
     }
-    if(friendId in req.user.friends) {
-        res.status(400).send("Can't add friends multiple times.").end();
+    if(friendId === req.user._id.toString()) {
+        res.status(400).send("Can't add yourself as friend").end();
         return;
     }
 
@@ -62,6 +62,11 @@ function addFriend(req, res) {
 
 function getFriends(req, res) {
     let userId = req.query.userId;
+    if(userId === undefined) {
+        res.status(400).end();
+        return;
+    }
+
     User.findById(userId).withFriends().exec().then((user) => {
         res.json(user.friends).end();
     }).catch((err) => {
