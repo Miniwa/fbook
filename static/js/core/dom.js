@@ -1,8 +1,12 @@
+function showError(message) {
+    console.error(message);
+}
+
 function buildProfileLink(user) {
     let container = $("<div>");
 
     let linkOptions = {
-        href: "/profile?id=" + user._id,
+        href: "/profile.html?id=" + user._id,
     };
     let link = $("<a>", linkOptions);
     link.append($("<h5>", {text: user.name.first + " " + user.name.last}));

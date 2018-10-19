@@ -1,13 +1,6 @@
 $(document).ready(() => {
-    getOwnFriends().then((friends) => {
-        $.each(friends, (i, friend) => {
-            $(".fbook-friends").append(buildProfileLink(friend));
-        });
-    }).catch((err) => {
-        console.error("Could not fetch friends:", err);
-    });
-
-    updatePosts();
+    let userId = getUserId();
+    updatePosts(userId);
 
     $(".fbook-post-comment").click(() => {
         if(!$(".fbook-comment-form")[0].checkValidity()) {
@@ -15,22 +8,27 @@ $(document).ready(() => {
         }
 
         let comment = $("#comment").val();
-        createOwnPost(comment).then(() => {
+        createPost(userId, comment).then(() => {
             $("#comment").val("");
-            updatePosts();
+            updatePosts(userId);
         }).catch((err) => {
             console.log("Could not post comment:", err);
         });
     });
 });
 
-function updatePosts() {
+function updatePosts(userId) {
     $(".fbook-messages").empty();
-    getOwnReceivedPosts().then((posts) => {
+    getReceivedPosts(userId).then((posts) => {
         $.each(posts, (i, post) => {
             $(".fbook-messages").append(buildPost(post));
         });
     }).catch((err) => {
         console.error("Could not fetch posts:", err);
     });
+}
+
+function getUserId() {
+    let params = new URLSearchParams(window.location.search);
+    return params.get("id");
 }

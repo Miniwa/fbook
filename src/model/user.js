@@ -36,7 +36,7 @@ userSchema.query.byNameQuery = function(query) {
     return this.or([firstNameQuery, lastNameQuery]);
 };
 
-userSchema.query.byUserName = function(username) {
+userSchema.query.byUsername = function(username) {
     return this.where({
         username: username,
     });
@@ -50,8 +50,8 @@ userSchema.statics.byNameQuery = function(query) {
     return this.find().byNameQuery(query).exec();
 };
 
-userSchema.statics.byUserName = function(username) {
-    return this.findOne().byUserName(username).exec();
+userSchema.statics.byUsername = function(username) {
+    return this.findOne().byUsername(username).exec();
 };
 
 const User = mongoose.model("User", userSchema);

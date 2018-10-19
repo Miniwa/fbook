@@ -5,9 +5,9 @@ const auth = require("./src/auth");
 let routes = express.Router();
 
 // Routes related to authentication.
-routes.post("/auth", auth.login);
 routes.get("/login.html", controllers.view);
 routes.get("/signup.html", controllers.view);
+routes.post("/auth", auth.login);
 routes.post("/user", controllers.createUser);
 
 // Setup auth routes
@@ -24,10 +24,14 @@ authed.use((req, res, next) => {
 authed.get("/logout", auth.logout);
 authed.get("/", controllers.view);
 authed.get("/search.html", controllers.view);
+authed.get("/profile.html", controllers.view);
 authed.get("/user/search", controllers.getUsersByNameQuery);
 authed.post("/addFriend", controllers.addFriend);
 authed.get("/getFriends", controllers.getFriends);
+authed.get("/getOwnFriends", controllers.getOwnFriends);
+authed.get("/getReceivedPosts", controllers.getReceivedPosts);
 authed.get("/getOwnReceivedPosts", controllers.getOwnReceivedPosts);
+authed.post("/createPost", controllers.createPost);
 authed.post("/createOwnPost", controllers.createOwnPost);
 routes.use(authed);
 

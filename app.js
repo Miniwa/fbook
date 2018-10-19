@@ -18,7 +18,7 @@ app.use(session({secret: "test"}));
 
 // Setup auth strategy
 passport.use(new LocalStrategy((username, password, done) => {
-    User.byUserName(username).then((user) => {
+    User.byUsername(username).then((user) => {
         if(user === null) {
             done(null, false);
         } else if(user.password !== password) {
@@ -36,7 +36,7 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(username, done) {
-    User.byUserName(username).then((user) => {
+    User.byUsername(username).then((user) => {
         if(user === null) {
             done(null, false);
         } else {
