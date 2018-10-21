@@ -1,4 +1,19 @@
 function showError(message) {
+    let header = $("<h4>", {
+        text: "Ett fel har uppstått",
+    });
+    let text = $("<p>", {
+        text: message,
+    });
+
+    let alert = $("<div>", {
+        class: "alert alert-danger",
+        role: "alert",
+    });
+
+    alert.append(header);
+    alert.append(text);
+    $(".fbook-main").prepend(alert);
     console.error(message);
 }
 
