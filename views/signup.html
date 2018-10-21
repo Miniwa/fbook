@@ -9,30 +9,25 @@
     <title>Fbook</title>
  </head>
  <body>
-    <div class="topnav">
-        <a class="active" href="#home">Profil</a>
-        <a href="#search">Sök</a>
-        <a href="#about">Logga ut</a>
-    </div>
     <div class="fbook-main container">
         <div class="fbook-register offset-4 col-4">
-            <h3>Inloggning</h3>
+            <h3>Registrering</h3>
             <form action="/user" method="POST">
                 <div class="form-group">
                     <label for="username">Användarnamn</label>
-                    <input class="form-control" type="text" name="username" required />
+                    <input class="form-control" id="username" type="text" name="username" required />
                 </div>
                 <div class="form-group">
                     <label for="password">Lösenord</label>
-                    <input class="form-control" type="password" name="password" required />
+                    <input class="form-control" id="password" type="password" name="password" required />
                 </div>
                 <div class="form-group">
                     <label for="firstname">Förnamn</label>
-                    <input class="form-control" type="text" name="firstname" required />
+                    <input class="form-control" id="firstname" type="text" name="firstname" required />
                 </div>
                 <div class="form-group">
                     <label for="lastname">Efternamn</label>
-                    <input class="form-control" type="text" name="lastname" required />
+                    <input class="form-control" id="lastname" type="text" name="lastname" required />
                 </div>
                 <button type="submit" class="btn btn-primary">Registrera</button>
             </form>

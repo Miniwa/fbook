@@ -2,7 +2,8 @@ $(document).ready(() => {
     let userId = getUserId();
     updatePosts(userId);
 
-    $(".fbook-post-comment").click(() => {
+    $(".fbook-post-comment").click((event) => {
+        event.preventDefault();
         if(!$(".fbook-comment-form")[0].checkValidity()) {
             return;
         }
@@ -12,7 +13,7 @@ $(document).ready(() => {
             $("#comment").val("");
             updatePosts(userId);
         }).catch((err) => {
-            console.log("Could not post comment:", err);
+            showError("Could not post comment.");
         });
     });
 });
@@ -24,11 +25,16 @@ function updatePosts(userId) {
             $(".fbook-messages").append(buildPost(post));
         });
     }).catch((err) => {
-        console.error("Could not fetch posts:", err);
+        showError("Could not fetch posts.");
     });
 }
 
 function getUserId() {
     let params = new URLSearchParams(window.location.search);
-    return params.get("id");
+    let id = params.get("id");
+    if(id === null) {
+        showError("No userid detected.");
+        throw new Error("No user id detected.");
+    }
+    return id;
 }

@@ -4,12 +4,13 @@ $(document).ready(() => {
             $(".fbook-friends").append(buildProfileLink(friend));
         });
     }).catch((err) => {
-        console.error("Could not fetch friends:", err);
+        showError("Could not fetch friends.");
     });
 
     updatePosts();
 
-    $(".fbook-post-comment").click(() => {
+    $(".fbook-post-comment").click((event) => {
+        event.preventDefault();
         if(!$(".fbook-comment-form")[0].checkValidity()) {
             return;
         }
@@ -19,7 +20,7 @@ $(document).ready(() => {
             $("#comment").val("");
             updatePosts();
         }).catch((err) => {
-            console.log("Could not post comment:", err);
+            showError("Could not post comment.");
         });
     });
 });
@@ -31,6 +32,6 @@ function updatePosts() {
             $(".fbook-messages").append(buildPost(post));
         });
     }).catch((err) => {
-        console.error("Could not fetch posts:", err);
+        showError("Could not fetch posts.");
     });
 }

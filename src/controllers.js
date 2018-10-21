@@ -10,6 +10,56 @@ function sendError(res, err) {
     res.send(err).end();
 }
 
+function reset(req, res) {
+    let user1 = new User({
+        username: "miniwa",
+        password: "test",
+        name: {
+            first: "Max",
+            last: "Byrde",
+        },
+    });
+    let user2 = new User({
+        username: "test1",
+        password: "test1",
+        name: {
+            first: "Test2",
+            last: "Testar",
+        },
+    });
+    let user3 = new User({
+        username: "test2",
+        password: "test2",
+        name: {
+            first: "Test3",
+            last: "Testar",
+        },
+    });
+    let user4 = new User({
+        username: "test3",
+        password: "test3",
+        name: {
+            first: "Test4",
+            last: "Testar",
+        },
+    });
+
+    // Setup friends
+    user1.friends.push(user2._id);
+
+    Promise.all([Post.remove({}), User.remove({})]).then(() => {
+        Promise.all([user1.save(), user2.save(), user3.save(), user4.save()]).then(() => {
+            res.json([user1, user2, user3, user4]).end();
+        }).catch((err) => {
+            console.error(err);
+            res.status(500).end();
+        });
+    }).catch((err) => {
+        console.error(err);
+        res.status(500).end();
+    });
+}
+
 function view(req, res) {
     res.sendFile(req.route.path, {root: "views"});
 }
@@ -26,7 +76,7 @@ function createUser(req, res) {
     });
 
     user.save().then(() => {
-        res.end();
+        res.redirect("/login.html").end();
     }).catch((err) => {
         sendError(res, err);
     });
@@ -114,6 +164,11 @@ function createOwnPost(req, res) {
 
 function getReceivedPosts(req, res) {
     let userId = req.query.userId;
+    if(userId === undefined) {
+        res.status(400).end();
+        return;
+    }
+
     Post.find().receivedBy(userId).withAuthor().exec().then((posts) => {
         res.json(posts).end();
     }).catch((err) => {
@@ -131,6 +186,7 @@ function getOwnReceivedPosts(req, res) {
 }
 
 module.exports = {
+    reset,
     view,
     createUser,
     getUsersByNameQuery,

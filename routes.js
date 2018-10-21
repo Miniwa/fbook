@@ -4,6 +4,9 @@ const auth = require("./src/auth");
 
 let routes = express.Router();
 
+// Reset route used in testing
+routes.get("/reset", controllers.reset);
+
 // Routes related to authentication.
 routes.get("/login.html", controllers.view);
 routes.get("/signup.html", controllers.view);

@@ -4,7 +4,6 @@ const mongoose = require("mongoose");
 const app = require("../app");
 const User = require("../src/model/user");
 const Post = require("../src/model/post");
-const should = chai.should();
 let USER1_ID;
 let USER2_ID;
 
@@ -328,6 +327,77 @@ describe("Backend", () => {
         });
     });
 
+    describe("GET /getReceivedPosts", () => {
+        it("should return posts received", (done) => {
+            let post = new Post({
+                author: USER2_ID,
+                receiver: USER1_ID,
+                comment: "hello",
+            });
+            post.save().then(() => {
+                login().then((agent) => {
+                    agent.get("/getReceivedPosts")
+                        .query({
+                            userId: USER1_ID,
+                        })
+                        .end((err, res) => {
+                            res.should.have.status(200);
+                            res.body.length.should.eq(1);
+                            res.body[0].receiver.should.eq(USER1_ID);
+                            res.body[0].author.username.should.eq("test1");
+                            res.body[0].comment.should.eq("hello");
+                            done();
+                        });
+                }).catch((err) => {
+                    console.error(err);
+                    done();
+                });
+            }).catch((err) => {
+                console.error(err);
+                done();
+            });
+        });
+
+        it("should return 400 on missing parameters", (done) => {
+            login().then((agent) => {
+                agent.get("/getReceivedPosts")
+                    .end((err, res) => {
+                        res.should.have.status(400);
+                        done();
+                    });
+            });
+        });
+    });
+
+    describe("GET /getOwnReceivedPosts", () => {
+        it("should return posts received by self", (done) => {
+            let post = new Post({
+                author: USER2_ID,
+                receiver: USER1_ID,
+                comment: "hello",
+            });
+            post.save().then(() => {
+                login().then((agent) => {
+                    agent.get("/getOwnReceivedPosts")
+                        .end((err, res) => {
+                            res.should.have.status(200);
+                            res.body.length.should.eq(1);
+                            res.body[0].receiver.should.eq(USER1_ID);
+                            res.body[0].author.username.should.eq("test1");
+                            res.body[0].comment.should.eq("hello");
+                            done();
+                        });
+                }).catch((err) => {
+                    console.error(err);
+                    done();
+                });
+            }).catch((err) => {
+                console.error(err);
+                done();
+            });
+        });
+    });
+
     describe("/POST createPost", () => {
         it("should create a new post", (done) => {
             login().then((agent) => {
@@ -342,6 +412,27 @@ describe("Backend", () => {
                         Post.find().receivedBy(USER2_ID).exec().then((posts) => {
                             posts.length.should.eq(1);
                             posts[0].receiver.toString().should.eq(USER2_ID);
+                            posts[0].author.toString().should.eq(USER1_ID);
+                            done();
+                        });
+                    });
+            });
+        });
+    });
+
+    describe("/POST createOwnPost", () => {
+        it("should create a new post received by self", (done) => {
+            login().then((agent) => {
+                agent.post("/createOwnPost")
+                    .type("form")
+                    .send({
+                        comment: "comment",
+                    })
+                    .end((err, res) => {
+                        res.should.have.status(200);
+                        Post.find().receivedBy(USER1_ID).exec().then((posts) => {
+                            posts.length.should.eq(1);
+                            posts[0].receiver.toString().should.eq(USER1_ID);
                             posts[0].author.toString().should.eq(USER1_ID);
                             done();
                         });
